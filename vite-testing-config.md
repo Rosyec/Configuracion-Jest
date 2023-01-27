@@ -1,10 +1,12 @@
 # Instalación y configuracion de Jest + React Testing Library
 ## En proyectos de React + Vite
 
-1. Instalaciones:
+1. Instalaciones (Typescript):
 ```
 npm i --dev jest babel-jest @babel/preset-env @babel/preset-react 
 npm i --dev @testing-library/react @types/jest jest-environment-jsdom
+npm i --save-dev @babel/preset-typescript
+npm i --save-dev jest typescript ts-jest @types/jest
 ```
 
 2. Opcional: Si usamos Fetch API en el proyecto:
@@ -23,23 +25,35 @@ npm i --dev whatwg-fetch
 ```
 module.exports = {
     presets: [
-        [ '@babel/preset-env', { targets: { esmodules: true } } ],
-        [ '@babel/preset-react', { runtime: 'automatic' } ],
+      [ '@babel/preset-env', {targets: {node: 'current'}} ],
+      [ '@babel/preset-typescript' ],
+      [ '@babel/preset-react', { runtime: 'automatic' } ]
     ],
-};
+  };
 ```
 
 5. Opcional, pero eventualmente necesario, crear Jest config y setup:
 
-__jest.config.js__
+__jest.config.cjs__
+
 ```
-module.exports = {
-    testEnvironment: 'jest-environment-jsdom',
-    setupFiles: ['./jest.setup.js']
-}
+npx ts-jest config:init
 ```
 
-__jest.setup.js__
+```
+/** @type {import('ts-jest').JestConfigWithTsJest} */
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'jsdom',
+  setupFiles: ['./jest.setup.ts'],
+  moduleNameMapper: {
+    "\\.(css|sass)$": "identity-obj-proxy",
+  }
+
+};
+```
+
+__jest.setup.ts__
 ```
 // En caso de necesitar la implementación del FetchAPI
 import 'whatwg-fetch'; // <-- yarn add whatwg-fetch
@@ -78,4 +92,8 @@ setupFilesAfterEnv: ["jest-extended/all"]
 Luego en cualquier archivo de pruebas, importamos Jest Extend:
 ```
 import 'jest-extended';
+```
+8. Opcional: Tener autocompletado de Jest:
+```
+npm install -D @types/jest
 ```
